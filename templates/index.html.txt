@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DevOps Quiz Game</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+<h1>🚀 DevOps Cloud Networking Quiz</h1>
+
+<form id="quizForm">
+
+{% for q in questions %}
+<div class="question">
+
+<h3>{{loop.index}}. {{q.question}}</h3>
+
+{% for option in q.options %}
+<label>
+<input type="radio" name="{{loop.parent.index0}}" value="{{option}}">
+{{option}}
+</label><br>
+{% endfor %}
+
+</div>
+{% endfor %}
+
+<button type="button" onclick="submitQuiz()">Submit</button>
+
+</form>
+
+<h2 id="result"></h2>
+
+<script>
+
+function submitQuiz(){
+
+let answers = {}
+
+let questions = document.querySelectorAll(".question")
+
+questions.forEach((q,index)=>{
+let selected = document.querySelector(`input[name="${index}"]:checked`)
+if(selected){
+answers[index] = selected.value
+}
+})
+
+fetch('/check',{
+method:'POST',
+headers:{
+'Content-Type':'application/json'
+},
+body:JSON.stringify(answers)
+})
+.then(res=>res.json())
+.then(data=>{
+document.getElementById("result").innerHTML =
+"🏆 Your Score: "+data.score
+})
+
+}
+
+</script>
+
+</body>
+</html>
